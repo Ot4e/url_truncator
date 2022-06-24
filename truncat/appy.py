@@ -1,5 +1,4 @@
-from crypt import methods
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -8,7 +7,7 @@ DATABASE = "truncat.sqlite"
 
 @app.route("/")
 def frontpage():
-    return "Ok"
+    return render_template("index.html")
 
 
 @app.route("/about")
@@ -36,8 +35,18 @@ def logoutpage():
     pass
 
 
-@app.route("/<urlid>", method=["GET", "POST"], endpoint="redirect")
+@app.route("/<urlid>", methods=["GET", "POST"], endpoint="redirect")
 def redirectpage():
+    pass
+
+
+@app.route("/linklist")
+def linklistpage():
+    pass
+
+
+@app.route("/truncate")
+def truncatepage():
     pass
 
 
