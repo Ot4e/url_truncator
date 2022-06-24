@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Contact-->
+    <section class="masthead" id="contact">
+        <div class="container">
+            <div class="text-center">
+                <h4 class="section-heading text-uppercase">Войти в свой профиль</h4>
+                <p>
+                <h3 class="section-subheading text-muted"></h3>
+            </div>  
+            <form id="contactForm" method ='POST'  action="{{ url_for('login') }}">
+                {{ form.csrf_token }}   
+                <div class="row align-items-stretch mb-5">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{form.name}}
+                        </div>
+                        <div class="form-group">    
+                            {{form.password}}
+                        </div>
+                        <div class="form-group">
+                        <div class="section-subheading text-muted">У вас еще нет профиля? 
+                        <a class="nav-link" href="/signup">Регистрация</a></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6"> 
+                        <h5 class="section-subheading text-muted"><i>Наличие профиля позволяет вам просматривать историю использования ссылок, создавать свои группы ссылок и придумывать свое уникальное короткое имя для ссылки.<p>Кроме того, ваши ссылки живут дольше ;)</i></h5>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary btn-xl text-uppercase"  type="submit">Вход</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock content %}

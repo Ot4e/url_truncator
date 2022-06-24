@@ -1,8 +1,16 @@
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template, session, g
+from forms import LoginForm
 
 app = Flask(__name__)
+app.secret_key = "secret"
 
 DATABASE = "truncat.sqlite"
+
+
+@app.before_request
+def global_vars():
+    if session.get("logged_in"):
+        g.logged = True
 
 
 @app.route("/")
@@ -21,18 +29,24 @@ def contactpage():
 
 
 @app.route("/signup")
-def sognuppage():
+def signuppage():
     pass
 
 
-@app.route("/login")
+@app.route("/login", endpoint="login", methods=["GET", "POST"])
 def loginpage():
-    pass
+    form = LoginForm()
+    if form.validate_on_submit():
+        # if form.name.data == logname and form.password.data == lognamepassw:
+        session["logged_in"] = True
+        return redirect("/truncate")
+    return render_template("login.html", form=form)
 
 
-@app.route("/logout")
+@app.route("/logout", endpoint="logout")
 def logoutpage():
-    pass
+    session.pop("logged_in", None)
+    return redirect("/")
 
 
 @app.route("/<urlid>", methods=["GET", "POST"], endpoint="redirect")
