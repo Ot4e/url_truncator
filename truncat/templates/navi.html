@@ -9,12 +9,14 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
                 <li class="nav-item"><a class="nav-link" href="/truncate">Сокращать</a></li>
-                <li class="nav-item"><a class="nav-link" href="/about">Преимущества регистрации</a></li>
                 <li class="nav-item"><a class="nav-link" href="/contact">Напишите нам</a></li>
-                <li class="nav-item"><a class="nav-link" href="/login">Вход</a></li>
-                <li class="nav-item"><a class="nav-link" href="/logout">Выход</a></li>
-                <li class="nav-item"><a class="nav-link" href="/signup">Регистрация</a></li>
-                <li class="nav-item"><a class="nav-link" href="/linklist">Мои ссылки</a></li>
+                {% if g.logged %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Выход</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/linklist">Мои ссылки</a></li>               
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Вход</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/signup">Регистрация</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
