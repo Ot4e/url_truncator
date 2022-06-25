@@ -14,6 +14,9 @@ def global_vars():
     """Установка глобальных переменных для работы с залогиненным пользователем"""
     if session.get("logged_in"):
         g.logged = True
+        g.logname = session.get("log_name")
+    else:
+        g.logname = "John Doe"
 
 
 def db():
@@ -66,7 +69,7 @@ def signuppage():
             flash("Вы успешно зарегистрированы и вошли в свой новый профиль")
             session["logged_in"] = True
             # имя залогиненного пользователя
-            g.logname = form.name.data
+            session["log_name"] = form.name.data
             return redirect("/")
         flash("Введенные пароли не совпадают, попробуйте еще раз")
     return render_template("signup.html", form=form)
@@ -86,7 +89,7 @@ def loginpage():
         if db_passw:
             log_passw = form.password.data.encode("utf-8")
             if bcrypt.checkpw(log_passw, db_passw["passw"]):
-                g.logname = form.name.data
+                session["log_name"] = form.name.data
                 session["logged_in"] = True
                 return redirect("/")
             flash("Введен неправильный пароль")
@@ -97,7 +100,9 @@ def loginpage():
 
 @app.route("/logout", endpoint="logout")
 def logoutpage():
+    """Обеспечение выхода пользователя из авторизированной зоны"""
     session.pop("logged_in", None)
+    session.pop("log_name", None)
     return redirect("/")
 
 
