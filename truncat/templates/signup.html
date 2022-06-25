@@ -5,11 +5,11 @@
     <section class="masthead" id="contact">
         <div class="container">
             <div class="text-center">
-                <h4 class="section-heading text-uppercase">Войти в свой профиль</h4>
+                <h4 class="section-heading text-uppercase">Создать свой профиль</h4>
                 <p>
                 <h3 class="section-subheading text-muted"></h3>
             </div>  
-            <form id="contactForm" method ='POST'  action="{{ url_for('login') }}">
+            <form id="contactForm" method ='POST'  action="{{ url_for('singup') }}">
                 {{ form.csrf_token }}   
                 <div class="row align-items-stretch mb-5">
                     <div class="col-md-6">
@@ -19,13 +19,16 @@
                         <div class="form-group">    
                             {{form.password}}
                         </div>
+                        <div class="form-group">    
+                            {{form.password2}}
+                        </div>
                         <div class="form-group">
-                        <div class="section-subheading text-muted">У вас еще нет профиля? 
-                        <a class="nav-link" href="/signup">Регистрация</a></div>
+                        <div class="section-subheading text-muted">У вас уже есть профиль? 
+                        <a class="nav-link" href="{{ url_for('login') }}">Вход</a></div>
                         </div>
                     </div>
                     <div class="col-md-6"> 
-                       
+
                         {% with messages = get_flashed_messages() %}
                             {% if messages %}
                                 <ul class=flashes>
@@ -37,13 +40,25 @@
                                 </ul>
                             {% endif %}
                         {% endwith %}
-                       
+
                     </div>
                 </div>
                 <div class="text-center">
-                    <button class="btn btn-primary btn-xl text-uppercase"  type="submit">Вход</button>
+                    <button class="btn btn-primary btn-xl text-uppercase"  type="submit">Регистрация</button>
                 </div>
             </form>
         </div>
     </section>
 {% endblock content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+            <h5 class="section-subheading text-muted"><li>{{ message }}</li></h5>
+        {% endfor %}
+    {% else %}
+        <h5 class="section-subheading text-muted"><i>Наличие профиля позволяет вам просматривать историю использования ссылок, создавать свои группы ссылок и придумывать свое уникальное короткое имя для ссылки.<p>Кроме того, ваши ссылки живут дольше ;)</i></h5>
+        </ul>
+    {% endif %}
+{% endwith %}
