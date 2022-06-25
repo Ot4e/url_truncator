@@ -50,15 +50,3 @@
         </div>
     </section>
 {% endblock content %}
-
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
-            <h5 class="section-subheading text-muted"><li>{{ message }}</li></h5>
-        {% endfor %}
-    {% else %}
-        <h5 class="section-subheading text-muted"><i>Наличие профиля позволяет вам просматривать историю использования ссылок, создавать свои группы ссылок и придумывать свое уникальное короткое имя для ссылки.<p>Кроме того, ваши ссылки живут дольше ;)</i></h5>
-        </ul>
-    {% endif %}
-{% endwith %}
