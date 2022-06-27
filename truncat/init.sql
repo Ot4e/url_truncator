@@ -33,3 +33,11 @@ CREATE TABLE gr (
     gr_owner INTEGER REFERENCES users (ID) ON DELETE CASCADE
                                            ON UPDATE NO ACTION
 );
+
+CREATE TABLE message (
+    ID          INTEGER  PRIMARY KEY,
+    name        STRING   NOT NULL,
+    email       STRING   NOT NULL,
+    content     TEXT     NOT NULL,
+    messaged_at DATETIME DEFAULT (CURRENT_TIMESTAMP) 
+);

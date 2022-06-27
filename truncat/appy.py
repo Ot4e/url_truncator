@@ -43,6 +43,11 @@ def contactpage():
     """Отправка сообщения администрации сайта"""
     form = ContactForm()
     if form.validate_on_submit():
+        db().execute(
+            "INSERT INTO message (name, email, content) VALUES (? , ?, ?)",
+            (form.name.data, form.email.data, form.message.data),
+        )
+        db().commit()
         flash("Ваше сообщение успешно отправлено")
         return redirect("/")
     return render_template("contact.html", form=form)
@@ -70,7 +75,7 @@ def signuppage():
                 (form.name.data, password_hash),
             )
             db().commit()
-            # где выводить это сообщение?
+            # выводим сообщение для пользователя
             flash("Вы успешно зарегистрированы и вошли в свой новый профиль")
             session["logged_in"] = True
             # имя залогиненного пользователя
