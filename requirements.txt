@@ -2,3 +2,4 @@ flask
 Flask-WTF
 bcrypt
 qrcode[pil]
+wtforms[email]
