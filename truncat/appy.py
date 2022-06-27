@@ -141,20 +141,22 @@ def truncatepage():
     form = TruncateForm()
     my_location = request.origin
 
-    #   if request.method == "POST":
-    #        temp = request.form.values
-    #        if request.form.values["submit"] == "copy":
-    #
-    #            # копирование в буфер обмена
-    #            command = "echo " + str(form.output.data).strip() + "| clip"
-    #            os.system(command)
-
     if form.validate_on_submit():
+        temp = request.form["btm"]
+        # копирование в буфер обмена
+        if temp == "copy":
+            command = "echo " + str(form.output.data).strip() + "| clip"
+            os.system(command)
+
+        # перенаправление на целевую страницу
+        if temp == "redirect":
+            return redirect(request.form["source"])
         db_obj = (
             db()
             .execute("SELECT truncat FROM source WHERE input=(?)", (form.source.data,))
             .fetchone()
         )
+
         # проверяем наличие ссылки в БД
         if db_obj:
             form.output.data = my_location + "/" + db_obj["truncat"]
