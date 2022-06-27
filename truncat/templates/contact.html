@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Contact-->
+    <section class="masthead" id="contact">
+        <div class="container">
+            <div class="text-center">
+                <h4 class="section-heading text-uppercase">Отправить сообщение</h4>
+                <p>
+                <h3 class="section-subheading text-muted"></h3>
+            </div>  
+            <form id="contactForm" method ='POST'  action="{{ url_for('contact') }}">
+                {{ form.csrf_token }}   
+                <div class="row align-items-stretch mb-5">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{form.name}}
+                        </div>
+                        <div class="form-group">    
+                            {{form.email}}
+                        </div>
+                    </div>
+                    <div class="col-md-6"> 
+                        <div class="form-group form-group-textarea mb-md-0">
+                            {{form.message}}
+                        </div>
+                    </div>
+                </div>
+
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class=flashes>
+                            {% for message in messages %}
+                                <h5 class="section-subheading text-muted">{{ message }}</h5>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                <div class="text-center">
+                    <button class="btn btn-primary btn-xl text-uppercase"  type="submit">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock content %}
