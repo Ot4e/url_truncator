@@ -96,6 +96,7 @@ def loginpage():
             if bcrypt.checkpw(log_passw, db_passw["passw"]):
                 session["log_name"] = form.name.data
                 session["logged_in"] = True
+                flash("Вы вошли в свой профиль")
                 return redirect("/")
             flash("Введен неправильный пароль")
         else:
@@ -108,6 +109,7 @@ def logoutpage():
     """Обеспечение выхода пользователя из авторизированной зоны"""
     session.pop("logged_in", None)
     session.pop("log_name", None)
+    flash("Вы покинули авторизированную зону. До новых встреч!")
     return redirect("/")
 
 
