@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Contact-->
+    <section class="masthead" id="contact">
+        <div class="container">
+            <div class="text-center">
+                <h4 class="section-heading text-uppercase">Сократить ссылку</h4>
+                <p>
+                <h3 class="section-subheading text-muted"></h3>
+            </div>  
+            <form id="truncateForm" method ='POST'  action="{{ url_for('truncate') }}">
+                {{ form.csrf_token }}  
+                <div class="row align-items-stretch mb-5">
+
+                    <div class="text-center">
+                        <div class="form-group">
+                            {{form.source}}
+                        </div>
+                        <p></p>
+                        <div class="text-center">    
+                            {{form.output}}
+                        </div>
+                    </div>
+                    <p></p>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Сократить ссылку" value='submit'>Сократить</button>
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" onclick="alert('Скопировано в буфер обмена')" title="Копировать в память" value='copy'>Копировать</button>
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Перейти по ссылке" value='redirect'>Перейти</button>
+                    </div>
+
+                </div>
+
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class=flashes>
+                            {% for message in messages %}
+                                <h5 class="section-subheading text-muted">{{ message }}</h5>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+            </form>
+        </div>
+    </section>
+{% endblock content %}

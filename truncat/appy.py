@@ -1,7 +1,6 @@
-import sqlite3
-import bcrypt
-from flask import Flask, redirect, render_template, session, g, flash
-from forms import ContactForm, LoginForm, SignupForm
+import sqlite3, string, secrets, bcrypt, os
+from flask import Flask, redirect, render_template, session, g, flash, request
+from forms import ContactForm, LoginForm, SignupForm, TruncateForm
 
 app = Flask(__name__)
 app.secret_key = "abrvalg"
@@ -16,6 +15,7 @@ def global_vars():
         g.logged = True
         g.logname = session.get("log_name")
     else:
+        g.logged = False
         g.logname = "John Doe"
 
 
@@ -25,6 +25,13 @@ def db():
         g.db = sqlite3.connect(DATABASE)
         g.db.row_factory = sqlite3.Row
     return g.db
+
+
+def sulr():
+    """Генератор уникальной ссылки"""
+    alphabet = string.ascii_letters + string.digits
+    truncate = "".join(secrets.choice(alphabet) for i in range(6))
+    return truncate
 
 
 @app.route("/")
@@ -128,9 +135,54 @@ def linklistpage():
     pass
 
 
-@app.route("/truncate")
+@app.route("/truncate", endpoint="truncate", methods=["GET", "POST"])
 def truncatepage():
-    pass
+    """Сокращаем ссылку, сохраняем в БД"""
+    form = TruncateForm()
+    my_location = request.origin
+
+    #   if request.method == "POST":
+    #        temp = request.form.values
+    #        if request.form.values["submit"] == "copy":
+    #
+    #            # копирование в буфер обмена
+    #            command = "echo " + str(form.output.data).strip() + "| clip"
+    #            os.system(command)
+
+    if form.validate_on_submit():
+        db_obj = (
+            db()
+            .execute("SELECT truncat FROM source WHERE input=(?)", (form.source.data,))
+            .fetchone()
+        )
+        # проверяем наличие ссылки в БД
+        if db_obj:
+            form.output.data = my_location + "/" + db_obj["truncat"]
+            return render_template("truncate.html", form=form)
+        # проверяем на совпадение с уже существующими в БД новой короткой ссылки
+        while True:
+            truncat = sulr()
+            db_surl = (
+                db()
+                .execute("SELECT truncat FROM source WHERE input=(?)", (truncat,))
+                .fetchone()
+            )
+            if db_surl != truncat:
+                break
+        # добавляем в БД новую ссылку
+        if g.logged:
+            db().execute(
+                "INSERT INTO source (truncat, input, owner) VALUES (? , ?, ?)",
+                (truncat, form.source.data, g.logname),
+            )
+        else:
+            db().execute(
+                "INSERT INTO source (truncat, input) VALUES (? , ?)",
+                (truncat, form.source.data),
+            )
+        db().commit()
+        form.output.data = my_location + "/" + truncat
+    return render_template("truncate.html", form=form)
 
 
 # главная функция

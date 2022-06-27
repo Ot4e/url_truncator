@@ -73,3 +73,24 @@ class ContactForm(FlaskForm):
             "class": "form-control",
         },
     )
+
+
+class TruncateForm(FlaskForm):
+    """Форма ввода ссылки для сокращения"""
+
+    source = StringField(
+        "url",
+        validators=[
+            validators.DataRequired(),
+            validators.URL(require_tld=False),
+        ],
+        render_kw={
+            "placeholder": "Введите ссылку для сокращения *",
+            "class": "form-control",
+        },
+    )
+
+    output = StringField(
+        "output",
+        render_kw={"placeholder": "Тут будет результат *", "class": "form-control"},
+    )

@@ -12,9 +12,11 @@ CREATE TABLE source (
     input     TEXT     NOT NULL,
     make_at   DATETIME DEFAULT (CURRENT_TIMESTAMP),
     owner     INTEGER  REFERENCES users (ID) ON DELETE SET NULL
-                                             ON UPDATE NO ACTION,
+                                             ON UPDATE NO ACTION
+                       DEFAULT NULL,
     source_gr INTEGER  REFERENCES gr (id) ON DELETE SET NULL
                                           ON UPDATE NO ACTION
+                       DEFAULT NULL
 );
 
 CREATE TABLE log (
