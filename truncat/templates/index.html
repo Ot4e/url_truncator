@@ -5,14 +5,26 @@
     <header class="masthead">
         <div class="container">
             <div class="masthead-subheading">
+ 
+  {% with messages = get_flashed_messages() %} 
+   {% if messages %}
+    <div class=flashes>
+        {% for message in messages %}
+            <h5 class="section-subheading text-muted">{{ message }}</h5>
+        {% endfor %}
+    </div>
+    {% else %}
                 <p>Добро пожаловать на наш сервис сокращения ссылок 
                 <small>
                 <p><small>Кому нужна ссылка в километр длиной? Правильно - никому!</small>
                 <p><small>Так давайте сокращать ссылки, прежде чем делиться ими!</small>
                 </small>
-            </div>
+    {% endif %}
+                </div>
             <div class="masthead-heading text-uppercase"></div>
             <a class="btn btn-primary btn-xl text-uppercase" href="/truncate">Сокращать</a>
         </div>
     </header>
+
+  {% endwith %}
 {% endblock content %}
