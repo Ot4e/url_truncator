@@ -1,7 +1,13 @@
 """Формы для сайта"""
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, validators, PasswordField
+from wtforms import (
+    StringField,
+    validators,
+    PasswordField,
+    TextAreaField,
+    EmailField,
+)
 
 
 class LoginForm(FlaskForm):
@@ -36,4 +42,34 @@ class SignupForm(FlaskForm):
         "password2",
         validators=[validators.DataRequired()],
         render_kw={"placeholder": "еще раз Ваш пароль *", "class": "form-control"},
+    )
+
+
+class ContactForm(FlaskForm):
+    """Форма отправки сообщения"""
+
+    name = StringField(
+        "name",
+        validators=[validators.DataRequired()],
+        render_kw={"placeholder": "Ваше имя *", "class": "form-control"},
+    )
+
+    email = EmailField(
+        "email",
+        validators=[
+            validators.DataRequired(),
+            validators.Email(),
+        ],
+        render_kw={"placeholder": "Ваш email *", "class": "form-control"},
+    )
+
+    message = TextAreaField(
+        "phone",
+        validators=[
+            validators.DataRequired(),
+        ],
+        render_kw={
+            "placeholder": "Ваше сообщение *",
+            "class": "form-control",
+        },
     )

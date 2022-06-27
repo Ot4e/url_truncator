@@ -1,7 +1,7 @@
 import sqlite3
 import bcrypt
 from flask import Flask, redirect, render_template, session, g, flash
-from forms import LoginForm, SignupForm
+from forms import ContactForm, LoginForm, SignupForm
 
 app = Flask(__name__)
 app.secret_key = "abrvalg"
@@ -38,9 +38,14 @@ def aboutpage():
     return "Ok"
 
 
-@app.route("/contact")
+@app.route("/contact", endpoint="contact", methods=["GET", "POST"])
 def contactpage():
-    return "Ok"
+    """Отправка сообщения администрации сайта"""
+    form = ContactForm()
+    if form.validate_on_submit():
+        flash("Ваше сообщение успешно отправлено")
+        return redirect("/")
+    return render_template("contact.html", form=form)
 
 
 @app.route("/signup", endpoint="singup", methods=["GET", "POST"])
