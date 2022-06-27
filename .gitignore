@@ -138,4 +138,7 @@ dmypy.json
 cython_debug/
 .vscode/settings.json
 .vscode/
+
+# my source
 sendbox/
+truncat.sqlite
