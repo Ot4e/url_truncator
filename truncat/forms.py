@@ -94,3 +94,27 @@ class TruncateForm(FlaskForm):
         "output",
         render_kw={"placeholder": "Тут будет результат *", "class": "form-control"},
     )
+
+
+class LinkListForm(FlaskForm):
+    """Форма редактирования ссылки пользователя на странице со спи ском его ссылок"""
+
+    source = StringField(
+        "url",
+        validators=[
+            validators.DataRequired(),
+            validators.URL(require_tld=False),
+        ],
+        render_kw={
+            "class": "form-control",
+            "readonly": "true",
+        },
+    )
+
+    output = StringField(
+        "output",
+        render_kw={
+            "class": "form-control",
+            "aria-describedby": "basic-addon3",
+        },
+    )

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Contact-->
+    <section class="masthead" id="contact">
+        <div class="container">
+            <div class="text-center">
+                <h4 class="section-heading text-uppercase">Редактировать короткую ссылку</h4>
+                <p>
+                <h3 class="section-subheading text-muted"></h3>
+            </div>  
+            <form id="LinkListForm" method ='POST'  action="{{ url_for('linklist') }}">
+                {{ form.csrf_token }}  
+                <div class="row align-items-stretch mb-5">
+
+                    <div class="text-center">
+                        <div class="form-group">
+                            {{form.source}}
+                        </div>
+                        <p></p>
+                        <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon3"><span  class="navbar-brand" style="color:#cccccc">{{g.origin}}</span></span>    
+                            {{form.output}}
+                        </div>
+                    </div>
+                    <p></p>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Сохранить новое имя ссылки" name='btm' value='save'>Сохранить изменения</button>
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Копировать в память короткую ссылку" name='btm' value = 'copy'>Копировать</button>
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Перейти по ссылке" name='btm' value='redirect'>Перейти</button>
+                    </div>
+
+                </div>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class=flashes>
+                            {% for message in messages %}
+                                <h5 class="section-subheading text-muted">{{ message }}</h5>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                
+            </form>
+        </div>
+    </section>
+{% endblock content %}

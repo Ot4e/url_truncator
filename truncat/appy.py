@@ -1,6 +1,6 @@
 import sqlite3, string, secrets, bcrypt, os
 from flask import Flask, redirect, render_template, session, g, flash, request
-from forms import ContactForm, LoginForm, SignupForm, TruncateForm
+from forms import ContactForm, LoginForm, SignupForm, TruncateForm, LinkListForm
 
 app = Flask(__name__)
 app.secret_key = "abrvalg"
@@ -11,6 +11,12 @@ DATABASE = "truncat.sqlite"
 @app.before_request
 def global_vars():
     """Установка глобальных переменных для работы с залогиненным пользователем"""
+    g.origin = request.url_root
+    if session.get("in_url"):
+        g.in_url = session.get("in_url")
+        g.out_url = session.get("out_url")[len(g.origin) :]
+    else:
+        g.in_url = g.out_url = False
     if session.get("logged_in"):
         g.logged = True
         g.logname = session.get("log_name")
@@ -121,6 +127,8 @@ def logoutpage():
     """Обеспечение выхода пользователя из авторизированной зоны"""
     session.pop("logged_in", None)
     session.pop("log_name", None)
+    session.pop("in_url", None)
+    session.pop("out_url", None)
     flash("Вы покинули авторизированную зону. До новых встреч!")
     return redirect("/")
 
@@ -129,31 +137,91 @@ def logoutpage():
 def redirectpage(urlid):
     """Перенаправление при переходе на короткую ссылку"""
 
-    if len(urlid) == 6:
+    target_url = False
+    # проверяем короткую ссылку как пользовательскую версию
+    if len(urlid) != 6:
+        target = db().execute("SELECT url FROM alias WHERE ID=(?)", (urlid,)).fetchone()
+        if target:
+            target_url = (
+                db()
+                .execute("SELECT input FROM source WHERE truncat=(?)", (target["url"],))
+                .fetchone()
+            )
+    # ищем короткую ссылку в основном списке
+    else:
         target_url = (
             db()
             .execute("SELECT input FROM source WHERE truncat=(?)", (urlid,))
             .fetchone()
         )
-        if target_url:
-            return redirect(target_url["input"])
+    # перенаправляем на целевую страницу
+    if target_url:
+        return redirect(target_url["input"])
+    # короткая ссылка отсуствует в БД
     flash("Такая ссылка не найдена")
     return redirect("/")
 
 
-@app.route("/linklist")
+@app.route("/linklist", methods=["GET", "POST"], endpoint="linklist")
 def linklistpage():
-    pass
+    """Отображение ссылок пользователя"""
+
+    form = LinkListForm()
+    if g.logged:
+        if form.validate_on_submit():
+            temp = request.form["btm"]
+            if temp == "save":
+                # проверить уникальность предлагаемого варианта
+                in_db_truncat_table = (
+                    db()
+                    .execute(
+                        "SELECT truncat FROM source WHERE truncat=(?)",
+                        (form.output.data,),
+                    )
+                    .fetchone()
+                )
+                in_db_alias_table = (
+                    db()
+                    .execute("SELECT ID FROM alias WHERE ID=(?)", (form.output.data,))
+                    .fetchone()
+                )
+                if not in_db_truncat_table and not in_db_alias_table:
+                    # добавить вариант имени в БД
+                    db().execute(
+                        "INSERT INTO alias (ID, url, owner) VALUES (? , ?, ?)",
+                        (form.output.data, g.out_url, g.logname),
+                    )
+                    db().commit()
+                    flash("Новая сокращенная ссылка добавлена в базу данных")
+                    g.out_url = form.output.data
+                else:
+                    flash("Такая короткая ссылка уже есть в нашей базе")
+                    flash("Выберите другое сокращение")
+                    return render_template("linklist.html", form=form)
+        # прокинуть данные из формы /truncat
+        if g.in_url:
+            form.source.data = g.in_url
+            form.output.data = g.out_url
+            return render_template("/linklist.html", form=form)
+        return render_template("linklist.html", form=form)
+    else:
+        flash("Для получения списка своих ссылок вам необходимо войти в свой профиль")
+        return redirect("/login")
 
 
 @app.route("/truncate", endpoint="truncate", methods=["GET", "POST"])
 def truncatepage():
     """Сокращаем ссылку, сохраняем в БД"""
     form = TruncateForm()
-    my_location = request.origin
+    my_location = request.url_root
 
     if form.validate_on_submit():
         temp = request.form["btm"]
+        # редактирование короткой ссылки для зареганых пользователей
+        if temp == "edit":
+            session["in_url"] = form.source.data
+            session["out_url"] = form.output.data
+            return redirect("/linklist")
         # копирование в буфер обмена
         if temp == "copy":
             command = "echo " + str(form.output.data).strip() + "| clip"
@@ -171,7 +239,7 @@ def truncatepage():
         if temp == "submit":
             # проверяем наличие ссылки в БД
             if db_obj:
-                form.output.data = my_location + "/" + db_obj["truncat"]
+                form.output.data = my_location + db_obj["truncat"]
                 flash("Короткая ссылка уже есть в нашей базе")
                 flash("Вы можете ее использовать")
                 return render_template("truncate.html", form=form)
@@ -197,7 +265,7 @@ def truncatepage():
                     (truncat, form.source.data),
                 )
             db().commit()
-            form.output.data = my_location + "/" + truncat
+            form.output.data = my_location + truncat
             flash("Короткая ссылка готова")
     return render_template("truncate.html", form=form)
 

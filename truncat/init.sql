@@ -43,3 +43,15 @@ CREATE TABLE message (
     content     TEXT     NOT NULL,
     messaged_at DATETIME DEFAULT (CURRENT_TIMESTAMP) 
 );
+
+CREATE TABLE alias (
+    ID    TEXT    NOT NULL
+                  UNIQUE
+                  PRIMARY KEY,
+    url   TEXT    REFERENCES source (truncat) ON DELETE SET NULL
+                                              ON UPDATE NO ACTION
+                  NOT NULL,
+    owner INTEGER REFERENCES users (ID) ON DELETE CASCADE
+                                        ON UPDATE NO ACTION
+                  NOT NULL
+);
