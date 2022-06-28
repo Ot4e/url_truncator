@@ -109,7 +109,7 @@ def loginpage():
                 session["log_name"] = form.name.data
                 session["logged_in"] = True
                 flash("Вы вошли в свой профиль")
-                return redirect("/")
+                return redirect("/truncate")
             flash("Введен неправильный пароль")
         else:
             flash("Пользователь с таким именем не найден")
@@ -126,8 +126,19 @@ def logoutpage():
 
 
 @app.route("/<urlid>", methods=["GET", "POST"], endpoint="redirection")
-def redirectpage():
-    pass
+def redirectpage(urlid):
+    """Перенаправление при переходе на короткую ссылку"""
+    in_url = request.url
+    if len(urlid) == 6:
+        target_url = (
+            db()
+            .execute("SELECT input FROM source WHERE truncat=(?)", (urlid,))
+            .fetchone()
+        )
+        if target_url:
+            return redirect(target_url["input"])
+    flash("Такая ссылка не найдена")
+    return redirect("/")
 
 
 @app.route("/linklist")
@@ -147,6 +158,7 @@ def truncatepage():
         if temp == "copy":
             command = "echo " + str(form.output.data).strip() + "| clip"
             os.system(command)
+            flash("Короткая ссылка скопирована в буфер обмена")
 
         # перенаправление на целевую страницу
         if temp == "redirect":
