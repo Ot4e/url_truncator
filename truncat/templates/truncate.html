@@ -9,7 +9,7 @@
                 <p>
                 <h3 class="section-subheading text-muted"></h3>
             </div>  
-            <form id="truncateForm" method ='POST'  action="{{ url_for('truncate') }}">
+            <form id="contactForm" method ='POST'  action="{{ url_for('truncate') }}">
                 {{ form.csrf_token }}  
                 <div class="row align-items-stretch mb-5">
 
@@ -18,7 +18,7 @@
                             {{form.source}}
                         </div>
                         <p></p>
-                        <div class="text-center">    
+                        <div class="form-group">    
                             {{form.output}}
                         </div>
                     </div>

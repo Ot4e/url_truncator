@@ -9,7 +9,7 @@
                 <p>
                 <h3 class="section-subheading text-muted"></h3>
             </div>  
-            <form id="LinkListForm" method ='POST'  action="{{ url_for('linklist') }}">
+            <form id="contactForm" method ='POST'  action="{{ url_for('linklist') }}">
                 {{ form.csrf_token }}  
                 <div class="row align-items-stretch mb-5">
 
@@ -18,9 +18,11 @@
                             {{form.source}}
                         </div>
                         <p></p>
+                        <div class="form-group">
                         <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon3"><span  class="navbar-brand" style="color:#cccccc">{{g.origin}}</span></span>    
+                        <span class="input-group-addon" id="basic-addon3" style="display: flex";><span  class="navbar-brand" style="color:#cccccc; margin: auto;">{{g.origin}}</span></span>    
                             {{form.output}}
+                        </div>
                         </div>
                     </div>
                     <p></p>
