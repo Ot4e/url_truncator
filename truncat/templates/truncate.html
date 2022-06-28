@@ -27,9 +27,15 @@
                         <button class="btn btn-primary btn-xl text-uppercase"  
                             type="submit" title="Сократить ссылку" name='btm' value='submit'>Сократить</button>
                         <button class="btn btn-primary btn-xl text-uppercase"  
-                            type="submit" onclick="alert('Скопировано в буфер обмена')" title="Копировать в память" name='btm' value = 'copy'>Копировать</button>
+                            type="submit" title="Копировать в память короткую ссылку" name='btm' value = 'copy'>Копировать</button>
                         <button class="btn btn-primary btn-xl text-uppercase"  
                             type="submit" title="Перейти по ссылке" name='btm' value='redirect'>Перейти</button>
+                        {% if g.logged %}
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Редактировать мою ссылку" name='btm' value='edit'>Редактировать</button>
+                        <button class="btn btn-primary btn-xl text-uppercase"  
+                            type="submit" title="Мои ссылки" name='btm' value='my_list'>Мои ссылки</button>
+                        {% endif %}
                     </div>
 
                 </div>
