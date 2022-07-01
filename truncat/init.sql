@@ -28,14 +28,6 @@ CREATE TABLE log (
                                           ON UPDATE NO ACTION
 );
 
-CREATE TABLE gr (
-    id       INTEGER PRIMARY KEY,
-    gr_name  TEXT    NOT NULL
-                     UNIQUE,
-    gr_owner INTEGER REFERENCES users (ID) ON DELETE CASCADE
-                                           ON UPDATE NO ACTION
-);
-
 CREATE TABLE message (
     ID          INTEGER  PRIMARY KEY,
     name        STRING   NOT NULL,
@@ -45,13 +37,14 @@ CREATE TABLE message (
 );
 
 CREATE TABLE alias (
-    ID    TEXT    NOT NULL
-                  UNIQUE
-                  PRIMARY KEY,
-    url   TEXT    REFERENCES source (truncat) ON DELETE SET NULL
-                                              ON UPDATE NO ACTION
-                  NOT NULL,
-    owner INTEGER REFERENCES users (ID) ON DELETE CASCADE
-                                        ON UPDATE NO ACTION
-                  NOT NULL
+    ID      TEXT     NOT NULL
+                     UNIQUE
+                     PRIMARY KEY,
+    url     TEXT     REFERENCES source (truncat) ON DELETE SET NULL
+                                                 ON UPDATE NO ACTION
+                     NOT NULL,
+    owner   INTEGER  REFERENCES users (ID) ON DELETE SET NULL
+                                           ON UPDATE NO ACTION
+                     NOT NULL,
+    make_at DATETIME DEFAULT (CURRENT_TIMESTAMP) 
 );

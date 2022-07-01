@@ -33,11 +33,50 @@ def db():
     return g.db
 
 
+def get_the_list(a, b):
+    db_items = (
+        db()
+        .execute(
+            "SELECT input, truncat, ID, alias.make_at FROM source INNER JOIN alias ON alias.url = source.truncat WHERE alias.owner=(?) UNION SELECT input, truncat, truncat, make_at FROM source WHERE source.owner=(?) order by make_at DESC LIMIT (?) OFFSET (?)",
+            (
+                g.logname,
+                g.logname,
+                a,
+                b,
+            ),
+        )
+        .fetchall()
+    )
+    return db_items
+
+
+def get_the_count():
+    db_items = (
+        db()
+        .execute(
+            "SELECT MAX(Rcount) + MAX(Acount) AS count FROM (SELECT COUNT(*) AS Rcount, 0 AS Acount FROM source INNER JOIN alias ON alias.url = source.truncat WHERE alias.owner=(?) UNION SELECT 0, COUNT(*) AS Acount FROM source WHERE source.owner=(?))",
+            (
+                g.logname,
+                g.logname,
+            ),
+        )
+        .fetchone()
+    )
+    return db_items["count"]
+
+
 def sulr():
     """Генератор уникальной ссылки"""
     alphabet = string.ascii_letters + string.digits
     truncate = "".join(secrets.choice(alphabet) for i in range(6))
     return truncate
+
+
+def copy_to_clipboard(url_str):
+    """Копирование ссылки в оперативную память"""
+    command = "echo " + str(url_str).strip() + "| clip"
+    os.system(command)
+    flash("Короткая ссылка скопирована в буфер обмена")
 
 
 @app.route("/")
@@ -115,7 +154,7 @@ def loginpage():
                 session["log_name"] = form.name.data
                 session["logged_in"] = True
                 flash("Вы вошли в свой профиль")
-                return redirect("/truncate")
+                return redirect("/linklist")
             flash("Введен неправильный пароль")
         else:
             flash("Пользователь с таким именем не найден")
@@ -165,7 +204,14 @@ def redirectpage(urlid):
 @app.route("/linklist", methods=["GET", "POST"], endpoint="linklist")
 def linklistpage():
     """Отображение ссылок пользователя"""
-
+    # получаем количество ссылок для данного пользователя
+    count_of_list = get_the_count()
+    if count_of_list % 5 == 0:
+        paginator = count_of_list // 5
+    else:
+        paginator = count_of_list // 5 + 1
+    # получаем часть ссылок для отображения на странице
+    link_list = get_the_list(5, 0)
     form = LinkListForm()
     if g.logged:
         if form.validate_on_submit():
@@ -194,19 +240,45 @@ def linklistpage():
                     db().commit()
                     flash("Новая сокращенная ссылка добавлена в базу данных")
                     g.out_url = form.output.data
+                    session.pop("in_url", None)
                 else:
                     flash("Такая короткая ссылка уже есть в нашей базе")
                     flash("Выберите другое сокращение")
-                    return render_template("linklist.html", form=form)
+                    return render_template(
+                        "linklist.html",
+                        form=form,
+                        link_list=link_list,
+                        count_of_list=paginator,
+                    )
+            if temp == "redirect":
+                return redirect(request.form["source"])
+            if temp == "copy":
+                copy_to_clipboard(g.origin + str(form.output.data))
+                g.out_url = form.output.data
+                return render_template(
+                    "/linklist.html",
+                    form=form,
+                    link_list=link_list,
+                    count_of_list=paginator,
+                )
         # прокинуть данные из формы /truncat
         if g.in_url:
             form.source.data = g.in_url
             form.output.data = g.out_url
-            return render_template("/linklist.html", form=form)
-        return render_template("linklist.html", form=form)
-    else:
-        flash("Для получения списка своих ссылок вам необходимо войти в свой профиль")
-        return redirect("/login")
+            return render_template(
+                "/linklist.html",
+                form=form,
+                link_list=link_list,
+                count_of_list=paginator,
+            )
+        return render_template(
+            "linklist.html",
+            form=form,
+            link_list=link_list,
+            count_of_list=paginator,
+        )
+    flash("Для получения списка своих ссылок вам необходимо войти в свой профиль")
+    return redirect("/login")
 
 
 @app.route("/truncate", endpoint="truncate", methods=["GET", "POST"])
@@ -224,10 +296,7 @@ def truncatepage():
             return redirect("/linklist")
         # копирование в буфер обмена
         if temp == "copy":
-            command = "echo " + str(form.output.data).strip() + "| clip"
-            os.system(command)
-            flash("Короткая ссылка скопирована в буфер обмена")
-
+            copy_to_clipboard(str(form.output.data))
         # перенаправление на целевую страницу
         if temp == "redirect":
             return redirect(request.form["source"])
