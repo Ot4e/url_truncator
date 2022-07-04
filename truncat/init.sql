@@ -13,7 +13,7 @@ CREATE TABLE source (
     make_at   DATETIME DEFAULT (CURRENT_TIMESTAMP),
     owner     INTEGER  REFERENCES users (ID) ON DELETE SET NULL
                                              ON UPDATE NO ACTION
-                       DEFAULT NULL,
+                       DEFAULT NULL
 );
 
 CREATE TABLE log (
