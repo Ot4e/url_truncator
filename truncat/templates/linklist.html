@@ -19,7 +19,7 @@
                     <h4 class="section-heading text-uppercase">Список ссылок пользователя {{ g.logname }}</h4>
                 </div>
                     {% for link in link_list %}
-                        <span class="nav-link">{{ loop.index + (offset)*5 }}</span>
+                        <span class="nav-link">{{ loop.index + (offset) }}</span>
                         
                             <span class="section-subheading text-muted" style="color:#0000FF">{{ link.input }}</span>
                         
@@ -44,16 +44,35 @@
                 <div class="text-center">
                   <ul class="pagination">
                     <li>
-                      <a class="nav-link" href="#" name="Previous">
+                      {% if page == 1  %}
+                      <a class="nav-link" title="Это первая страница списка">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>                      
+                      {% else %}
+                      <a class="nav-link" href="{{ url_for('linklist', page=page-1) }}" title="Предыдущая страница списка">
                         <span aria-hidden="true">&laquo;</span>
                       </a>
+                      {% endif %}
                     </li>
-                        {% for i in range(count_of_list) %}
-                            <li><a class="nav-link" href="{{ url_for('linklist', page=i+1) }}">{{loop.index}}</a></li>
-                        {% endfor %}
+
+                      {% for i in range(stp,endp+1) %}
+                            {% if page == i %}
+                                <li><a class="nav-link" href="{{ url_for('linklist', page=i) }}" style="color:#FFFFFF">{{i}}</a></li>
+                            {% else %}
+                                <li><a class="nav-link" href="{{ url_for('linklist', page=i) }}">{{i}}</a></li>
+                            {% endif %}
+                            
+                      {% endfor %}
+
                     <li>
-                      <a class="nav-link" href="#" name="Next">
+                      {% if page == count_of_list  %}
+                      <a class="nav-link" title="Это последняя страница списка">
                         <span aria-hidden="true">&raquo;</span>
+                      {% else %}
+                      <a class="nav-link" href="{{ url_for('linklist', page=page+1) }}" title="Следующая страница списка">
+                        <span aria-hidden="true">&raquo;</span>
+                      {% endif %}
+                      </a>
                       </a>
                     </li>
                   </ul>

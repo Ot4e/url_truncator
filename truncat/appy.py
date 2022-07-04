@@ -289,9 +289,25 @@ def redirectpage(urlid):
 @app.route("/linklist/<page>", methods=["GET", "POST"], endpoint="linklist")
 def linklistpage(page):
     """Отображение ссылок пользователя"""
-    page = page
+    page = int(page)
     form = LinkListForm()
-    offset = int(page) - 1
+    offset = (int(page) - 1) * 5
+    count_of_list = get_the_count()
+    # получаем начало и конец диапазона отображения цифр пагинатора
+    if count_of_list > 3:
+        if page - 1 < 1:
+            stp = 1
+            endp = stp + 2
+        elif page + 1 > count_of_list:
+            endp = count_of_list
+            stp = endp - 2
+        else:
+            stp = page - 1
+            endp = page + 1
+    else:
+        stp = 1
+        endp = count_of_list
+
     if "copy" in set(request.form.keys()):
         copy_to_clipboard(g.origin + request.form["copy"])
         flash("Ссылка скопирована в буфер обмена")
@@ -300,19 +316,23 @@ def linklistpage(page):
             page=page,
             form=form,
             link_list=get_the_list(5, offset),
-            count_of_list=get_the_count(),
+            count_of_list=count_of_list,
             offset=offset,
+            stp=stp,
+            endp=endp,
         )
     if "redirect" in set(request.form.keys()):
         return redirect(g.origin + request.form["redirect"])
 
     return render_template(
         "linklist.html",
-        page=1,
+        page=page,
         form=form,
         link_list=get_the_list(5, offset),
-        count_of_list=get_the_count(),
+        count_of_list=count_of_list,
         offset=offset,
+        stp=stp,
+        endp=endp,
     )
 
 
