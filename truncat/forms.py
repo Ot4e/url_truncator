@@ -117,6 +117,9 @@ class LinkListForm(FlaskForm):
 
     output = StringField(
         "output",
+        validators=[
+            validators.DataRequired(),
+        ],
         render_kw={
             "class": "form-control",
             "aria-describedby": "basic-addon3",
