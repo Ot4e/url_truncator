@@ -30,7 +30,7 @@
                             type="submit" title="Копировать в память короткую ссылку" name='btm' value = 'copy'>Копировать</button>
                         <button class="btn btn-primary"  
                             type="submit" title="Перейти по ссылке" name='btm' value='redirect'>Перейти</button>
-                        {% if g.logged %}
+                        {% if g.logged and form.output.data %}
                         <a href="{{ url_for('edit', id=0) }}" class="btn btn-primary"  
                             type="submit" title="Редактировать мою ссылку">Редактировать</a>
                         {% endif %}
