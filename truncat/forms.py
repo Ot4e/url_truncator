@@ -92,7 +92,11 @@ class TruncateForm(FlaskForm):
 
     output = StringField(
         "output",
-        render_kw={"placeholder": "Тут будет результат *", "class": "form-control"},
+        render_kw={
+            "placeholder": "Тут будет результат *",
+            "class": "form-control",
+            "readonly": "true",
+        },
     )
 
 

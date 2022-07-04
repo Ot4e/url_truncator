@@ -4,40 +4,8 @@
     <!-- Contact-->
     <section class="masthead" id="contact">
         <div class="container">
-        {% if g.in_url %}
-            <div class="text-center">
-                <h4 class="section-heading text-uppercase">Редактировать короткую ссылку</h4>
-                <p>
-                <h3 class="section-subheading text-muted"></h3>
-            </div>
-        {% endif %}  
-            <form id="contactForm" method ='POST'  action="{{ url_for('linklist') }}">
+            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=0) }}">
                 {{ form.csrf_token }}  
-                <div class="row align-items-stretch mb-5">
-                {% if g.in_url %}    
-                    <div class="text-center">
-                        <div class="form-group">
-                            {{form.source}}
-                        </div>
-                        <p></p>
-                        <div class="form-group">
-                        <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon3" style="display: flex";><span  class="navbar-brand" style="color:#cccccc; margin: auto;">{{g.origin}}</span></span>    
-                            {{form.output}}
-                        </div>
-                        </div>
-                    </div>
-                    <p></p>
-                    <div class="text-center">
-                        <button class="btn btn-primary btn-xl text-uppercase"  
-                            type="submit" title="Сохранить новое имя ссылки" name='btm' value='save'>Сохранить изменения</button>
-                        <button class="btn btn-primary btn-xl text-uppercase"  
-                            type="submit" title="Копировать в память короткую ссылку" name='btm' value = 'copy'>Копировать</button>
-                        <button class="btn btn-primary btn-xl text-uppercase"  
-                            type="submit" title="Перейти по ссылке" name='btm' value='redirect'>Перейти</button>
-                    </div>
-                {% endif %}
-                </div>
                     {% with messages = get_flashed_messages() %}
                         {% if messages %}
                             <div class=flashes>
@@ -51,22 +19,22 @@
                     <h4 class="section-heading text-uppercase">Список ссылок пользователя {{ g.logname }}</h4>
                 </div>
                     {% for link in link_list %}
-                        <span class="nav-link">{{loop.index}}</span>
+                        <span class="nav-link">{{ loop.index + (offset)*5 }}</span>
                         
                             <span class="section-subheading text-muted" style="color:#0000FF">{{ link.input }}</span>
                         
                             <p></p>
                         <div class="input-group">
-                            <span class="form-control" style="color:#000000">{{g.origin+link.ID }}</span>
+                            <span class="form-control" style="color:#000000">{{ g.origin+link.ID }}</span>
                              <div class="input-group-btn">
                                 <button class="btn btn-primary"  
-                                        type="submit" title="Копировать в память короткую ссылку" name='btm{{loop.index}}' value = 'copy'>Копировать</button>
-                                <button class="btn btn-primary"  
-                                        type="submit" title="Перейти по ссылке" name='btm{{loop.index}}' value = 'redirect'>Перейти</button>
-                                <button class="btn btn-primary"  
-                                        type="submit" title="Добавить новое короткое имя" name='btm{{loop.index}}' value = 'edit'>Редактировать</button>
-                                <button class="btn btn-primary"  
-                                        type="submit" title="Посмотреть статистику переходов по ссылке" name='btm{{loop.index}}' value = 'statis'>Статистика</button>                                        
+                                        type="submit" title="Копировать в память короткую ссылку" name='copy' value ='{{link.ID}}'>Копировать</button>
+                                <a href="{{ url_for('redirection', urlid=link.ID) }}" class="btn btn-primary"  
+                                        type="submit" title="Перейти по ссылке" name='redirect' value = '{{link.ID}}'>Перейти</a>
+                                <a href="{{ url_for('edit', id=link.ID) }}" class="btn btn-primary"  
+                                        type="submit" title="Редактировать мою ссылку">Редактировать</a>
+                                <a href="{{ url_for('statist', id=link.ID) }}" class="btn btn-primary"   
+                                        type="submit" title="Посмотреть статистику переходов по ссылке">Статистика</a>                                        
                             </div>
                             <p></p>
                         </div>
@@ -80,9 +48,9 @@
                         <span aria-hidden="true">&laquo;</span>
                       </a>
                     </li>
-                      {% for i in range(count_of_list) %}
-                        <li><a class="nav-link" href="#">{{loop.index}}</a></li>
-                      {% endfor %}
+                        {% for i in range(count_of_list) %}
+                            <li><a class="nav-link" href="{{ url_for('linklist', page=i+1) }}">{{loop.index}}</a></li>
+                        {% endfor %}
                     <li>
                       <a class="nav-link" href="#" name="Next">
                         <span aria-hidden="true">&raquo;</span>

@@ -14,9 +14,6 @@ CREATE TABLE source (
     owner     INTEGER  REFERENCES users (ID) ON DELETE SET NULL
                                              ON UPDATE NO ACTION
                        DEFAULT NULL,
-    source_gr INTEGER  REFERENCES gr (id) ON DELETE SET NULL
-                                          ON UPDATE NO ACTION
-                       DEFAULT NULL
 );
 
 CREATE TABLE log (
