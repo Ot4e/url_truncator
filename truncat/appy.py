@@ -6,6 +6,17 @@ app = Flask(__name__)
 app.secret_key = "abrvalg"
 
 DATABASE = "truncat.sqlite"
+PAGELIST = {
+    "statist",
+    "edit",
+    "contact",
+    "singup",
+    "login",
+    "logout",
+    "linklist",
+    "truncate",
+    "index",
+}
 
 
 @app.before_request
@@ -138,7 +149,9 @@ def editpage():
                     .execute("SELECT ID FROM alias WHERE ID=(?)", (form.output.data,))
                     .fetchone()
                 )
-                if not in_db_truncat_table and not in_db_alias_table:
+                # проверяем нахождение в списке марштуров
+                a = form.output.data in PAGELIST
+                if not in_db_truncat_table and not in_db_alias_table and not a:
                     # добавить вариант имени в БД
                     db().execute(
                         "INSERT INTO alias (ID, url, owner) VALUES (? , ?, ?)",
@@ -225,6 +238,9 @@ def signuppage():
 @app.route("/login", endpoint="login", methods=["GET", "POST"])
 def loginpage():
     """Вход зарегистрированного пользователя"""
+    if g.logged:
+        flash("Вы уже вошли в профиль под именем '" + g.logname + "'")
+        return redirect("/")
     form = LoginForm()
     if form.validate_on_submit():
         db_passw = (
@@ -282,7 +298,8 @@ def redirectpage(urlid):
     if target_url:
         return redirect(target_url["input"])
     # короткая ссылка отсуствует в БД
-    flash("Такая ссылка не найдена")
+    if not urlid in PAGELIST:
+        flash("Такая ссылка не найдена")
     return redirect("/")
 
 
