@@ -18,11 +18,12 @@ CREATE TABLE source (
 
 CREATE TABLE log (
     ID     INTEGER  PRIMARY KEY,
-    what   INTEGER  REFERENCES source (id) ON DELETE CASCADE
-                                           ON UPDATE NO ACTION,
+    what   TEXT     NOT NULL,
     use_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
     who    INTEGER  REFERENCES users (ID) ON DELETE SET NULL
                                           ON UPDATE NO ACTION
+                    DEFAULT NULL,
+    IP     TEXT     DEFAULT NULL
 );
 
 CREATE TABLE message (

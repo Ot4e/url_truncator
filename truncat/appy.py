@@ -296,6 +296,18 @@ def redirectpage(urlid):
         )
     # перенаправляем на целевую страницу
     if target_url:
+        # определяем IP пользователя
+        ip_addr = request.environ.get("HTTP_X_FORWARDED_FOR", request.remote_addr)
+        # пишем лог использования ссылки в БД
+        db().execute(
+            "INSERT INTO log (what, who, IP) VALUES (? , ?, ?)",
+            (
+                urlid,
+                g.logname,
+                ip_addr,
+            ),
+        )
+        db().commit()
         return redirect(target_url["input"])
     # короткая ссылка отсуствует в БД
     if not urlid in PAGELIST:
