@@ -4,7 +4,7 @@
     <!-- Contact-->
     <section class="masthead" id="contact">
         <div class="container">
-            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=0) }}">
+            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=1) }}">
                 {{ form.csrf_token }}  
                     {% with messages = get_flashed_messages() %}
                         {% if messages %}

@@ -124,8 +124,23 @@ def frontpage():
 @app.route("/statist", endpoint="statist", methods=["GET", "POST"])
 def statistpage():
     """Отображение страницы статистики использования ссылки"""
-    get_log = get_the_one(request.args["id"])
-    return get_log["input"] + get_log["truncat"]
+    form = LinkListForm()
+    # читаем из БД сокращенную сслыку и полную ссылку get_url["truncat"] и get_url["input"]
+    get_url = get_the_one(request.args["id"])
+    # читаем из БД лог переходов по данной сокращенной ссылке
+    get_stat = (
+        db()
+        .execute("SELECT use_at, who, IP FROM log where what=?", (request.args["id"],))
+        .fetchall()
+    )
+    count = len(get_stat)
+    return render_template(
+        "statist.html",
+        form=form,
+        urls=get_url,
+        stat=get_stat,
+        count=count,
+    )
 
 
 @app.route("/edit", endpoint="edit", methods=["POST", "GET"])
