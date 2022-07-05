@@ -1,5 +1,4 @@
 import sqlite3, string, secrets, bcrypt, os
-from wsgiref.util import request_uri
 from flask import Flask, redirect, render_template, session, g, flash, request
 from forms import ContactForm, LoginForm, SignupForm, TruncateForm, LinkListForm
 

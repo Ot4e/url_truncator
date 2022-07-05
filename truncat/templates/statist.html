@@ -4,7 +4,7 @@
     <!-- Statist-->
     <section class="masthead" id="contact">
         <div class="container">
-            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=1) }}">
+            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=page) }}">
                 {{ form.csrf_token }}  
                 <div class="text-center">
                     <h4 class="section-heading text-uppercase">Статистика использования ссылки <span style="font-weight: lighter;"> {{ g.origin }} <span style="color: #AFEEEE;"> {{urls.truncat}} </span></span> </h4>
@@ -15,7 +15,7 @@
                 </div>
 
                     <p></p>
-                    <button class="btn btn-primary" style="color:#000000;">
+                    <button class="btn btn-primary" style="color:#000000;" title="Вернуться к списку">
                         Количество использований <span class="badge"style="color:#000000;"><big>{{ count }}</big></span>
                     </button>
                     <p></p>
@@ -23,13 +23,13 @@
                     {% for item in stat %}
                         <div class="input-group">
                             <div class="input-group-btn">
-                                <button class="btn btn-primary" style="color:#000000;">
+                                <button class="btn btn-primary" style="color:#000000;" title="Вернуться к списку">
                                     IP адрес пользователя <span class="badge"style="color:#000000;"><big>{{item.IP}}</big></span>
                                 </button>
-                                <button class="btn btn-primary" style="color:#000000;">
+                                <button class="btn btn-primary" style="color:#000000;" title="Вернуться к списку">
                                     Имя пользователя <span class="badge"style="color:#000000;"><big>{{item.who}}</big></span>
                                 </button>
-                                <button class="btn btn-primary" style="color:#000000;">
+                                <button class="btn btn-primary" style="color:#000000;" title="Вернуться к списку">
                                     Время использования <span class="badge"style="color:#000000;"><big>{{item.use_at}}</big></span>
                                 </button>
                                 <hr>
