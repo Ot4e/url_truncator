@@ -4,7 +4,7 @@
     <!-- Contact-->
     <section class="masthead" id="contact">
         <div class="container">
-            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=1) }}">
+            <form id="contactForm" method ="POST"  action="{{ url_for('linklist', page=page) }}">
                 {{ form.csrf_token }}  
                     {% with messages = get_flashed_messages() %}
                         {% if messages %}
@@ -33,7 +33,7 @@
                                         type="submit" title="Перейти по ссылке" name='redirect' value = '{{link.ID}}'>Перейти</a>
                                 <a href="{{ url_for('edit', id=link.ID) }}" class="btn btn-primary"  
                                         type="submit" title="Редактировать мою ссылку">Редактировать</a>
-                                <a href="{{ url_for('statist', id=link.ID) }}" class="btn btn-primary"   
+                                <a href="{{ url_for('statist', id=link.ID, page=page) }}" class="btn btn-primary"   
                                         type="submit" title="Посмотреть статистику переходов по ссылке">Статистика</a>                                        
                             </div>
                             <p></p>

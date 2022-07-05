@@ -1,4 +1,5 @@
 import sqlite3, string, secrets, bcrypt, os
+from wsgiref.util import request_uri
 from flask import Flask, redirect, render_template, session, g, flash, request
 from forms import ContactForm, LoginForm, SignupForm, TruncateForm, LinkListForm
 
@@ -124,6 +125,7 @@ def frontpage():
 @app.route("/statist", endpoint="statist", methods=["GET", "POST"])
 def statistpage():
     """Отображение страницы статистики использования ссылки"""
+    page = int(request.args["page"])
     form = LinkListForm()
     # читаем из БД сокращенную сслыку и полную ссылку get_url["truncat"] и get_url["input"]
     get_url = get_the_one(request.args["id"])
@@ -140,6 +142,7 @@ def statistpage():
         urls=get_url,
         stat=get_stat,
         count=count,
+        page=page,
     )
 
 
