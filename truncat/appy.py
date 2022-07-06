@@ -1,4 +1,4 @@
-import sqlite3, string, secrets, os
+import sqlite3, string, secrets, bcrypt, os
 from flask import Flask, redirect, render_template, session, g, flash, request
 from forms import ContactForm, LoginForm, SignupForm, TruncateForm, LinkListForm
 
