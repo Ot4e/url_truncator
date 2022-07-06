@@ -356,7 +356,6 @@ def linklistpage(page):
 
     if "copy" in set(request.form.keys()):
         copy_to_clipboard(g.origin + request.form["copy"])
-        flash("Ссылка скопирована в буфер обмена")
         return render_template(
             "linklist.html",
             page=page,
